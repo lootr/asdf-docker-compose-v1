@@ -81,7 +81,12 @@ download_release() {
   platform=$(get_platform)
   arch=$(get_arch)
 
-  url="$GH_REPO/releases/download/v${version}/docker-compose-${platform}-${arch}"
+  if [[ ${version:0:1} -ge 2 ]]; then
+    version="v${version}"
+  else
+    platform="$(printf '%s' "${platform:0:1}" | tr '[:lower:]' '[:upper:]')${platform:1:${#platform}}"
+  fi
+  url="$GH_REPO/releases/download/${version}/docker-compose-${platform}-${arch}"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
